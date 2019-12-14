@@ -63,9 +63,7 @@ def model_train(model, train_loader, test_loader, para, fold):
      optim.load_state_dict(checkpoint['optimizer_state_dict'])
      loss_list=checkpoint['lost_list']
   else:
-     print('first')
      loss_list=[]
-     print(type(lost_list), lost_list)
      epoch_con=0
      loss_val_store=2
   device=para['device']
