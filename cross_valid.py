@@ -30,6 +30,50 @@ def k_cross_data_split(sample_data, mask, batch_size,fold,kf):
   test_data=TensorDataset(test_image[1:,:,:,:], test_mask[1:,:,:,:])
   return train_data, test_data
 
+def model_train(model, train_loader, test_loader, para, fold):
+  weight=para['dice_weight']
+  optim =torch.optim.Adam(model.parameters(),lr=para['learning_rate'])
+  model_save_name='Unet_single_cell_'+str(para['unet_init_kernel'])+'features_bceloss+dice_'+str(weight)+'_fold_'+str(fold)+'.pt'
+  path=para['save_path']+'/'+model_save_name
+  if para['resume']==fold:
+    checkpoint=torch.load(path)
+    epoch_con = checkpoint['epoch']
+    loss_val_store = checkpoint['lowest_loss']
+    model.load_state_dict(checkpoint['model_state_dict'])
+    optim.load_state_dict(checkpoint['optimizer_state_dict'])
+    lost_list=checkpoint['lost_list']
+  else:
+    lost_list=[]
+    epoch_con=0
+    loss_val_store=2
+  device=para['device']
+  for epochs in range(epoch_con,para['num_epochs']):
+    model.train()
+    for i, (X,y) in enumerate(train_loader):
+      X=X.to(device)
+      y-y.to(device)
+      prediction=model(X)
+      loss=torch.nn.BCELoss(prediction,y)+dice_loss(prediction,y,weight)
+      optim.zero_grad()
+      loss.backward()
+      optim.step()
+
+    model.eval()
+    for i ,(X,y) in enumerate(test_loader):
+      X=X.to(device)
+      y=y.to(device)
+      prediction=model(X)
+      loss_val=(loss_val*i+torch.nn.BCELoss(prediction,y).item()+dice_loss(prediction ,y).item())/(i+1)
+    
+    if loss_val_store > loss_val:
+      loss_val_store=loss_val
+      model_store=model
+    loss_list.append([loss.item(),loss_val])
+    torch.save({'epoch': epochs,'model_state_dict': model.state_dict(),'optimizer_state_dict': optimizer.state_dict(),'best_model':model_store.state_dict(),'lowest_loss': loss_val_store, 'loss_list':loss_list}, path)
+  print ('Epoch [{}/{}], training error: {:.4f}, validation Loss: {:.4f}'
+                   .format(epochs+1, EPOCHS, loss, loss_val))    
+  return
+
 
 def cross_val(kf,sample_data,mask_data,model,para):
   for i in range(kf):
@@ -39,7 +83,5 @@ def cross_val(kf,sample_data,mask_data,model,para):
     train_loader=DataLoader(dataset=train_data, batch_size=para['batch_size'], shuffle=True,drop_last=True)
     test_loader=DataLoader(dataset=test_data, batch_size=para['batch_size'], shuffle=False,drop_last=True)
     print('fold:',i)
-    device=para['device']
-    model1=model.to(device)
-    model_train(model1,train_loader,test_loader,para,i)
+    model_train(model,train_loader,test_loader,para,i)
   return
