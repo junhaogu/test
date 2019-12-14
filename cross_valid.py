@@ -30,6 +30,24 @@ def k_cross_data_split(sample_data, mask, batch_size,fold,kf):
   test_data=TensorDataset(test_image[1:,:,:,:], test_mask[1:,:,:,:])
   return train_data, test_data
 
+
+def dice_loss(prediction, true, weight):
+  overlap=prediction*true
+  sum_overlap=torch.sum(overlap,2)
+  sum_overlap=torch.sum(sum_overlap,2)
+  prediction_shift=prediction-1
+  fn=-prediction_shift*true
+  fn_sum=torch.sum(fn,2)
+  fn_sum=torch.sum(fn_sum,2)
+  true_shift=true-1
+  fp=-true_shift*prediction
+  fp_sum=torch.sum(fp,2)
+  fp_sum=torch.sum(fp_sum,2)
+  dice=sum_overlap/(sum_overlap+weight*fp_sum+(1-weight)*fn_sum)
+  dice=torch.sum(dice)/dice.shape[0]
+  return 1-dice
+
+
 def model_train(model, train_loader, test_loader, para, fold):
   weight=para['dice_weight']
   optim =torch.optim.Adam(model.parameters(),lr=para['learning_rate'])
