@@ -51,7 +51,7 @@ def model_train(model, train_loader, test_loader, para, fold):
     model.train()
     for i, (X,y) in enumerate(train_loader):
       X=X.to(device)
-      y-y.to(device)
+      y=y.to(device)
       prediction=model(X)
       loss=torch.nn.BCELoss(prediction,y)+dice_loss(prediction,y,weight)
       optim.zero_grad()
