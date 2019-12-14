@@ -33,6 +33,7 @@ def k_cross_data_split(sample_data, mask, batch_size,fold,kf):
 def model_train(model, train_loader, test_loader, para, fold):
   weight=para['dice_weight']
   optim =torch.optim.Adam(model.parameters(),lr=para['learning_rate'])
+  criterion=torch.nn.BCELoss()
   model_save_name='Unet_single_cell_'+str(para['unet_init_kernel'])+'features_bceloss+dice_'+str(weight)+'_fold_'+str(fold)+'.pt'
   path=para['save_path']+'/'+model_save_name
   if para['resume']==fold:
@@ -47,13 +48,14 @@ def model_train(model, train_loader, test_loader, para, fold):
     epoch_con=0
     loss_val_store=2
   device=para['device']
+  model=model.to(device)
   for epochs in range(epoch_con,para['num_epochs']):
     model.train()
     for i, (X,y) in enumerate(train_loader):
       X=X.to(device)
       y=y.to(device)
       prediction=model(X)
-      loss=torch.nn.BCELoss(prediction,y)+dice_loss(prediction,y,weight)
+      loss=criterion(prediction,y)+dice_loss(prediction,y,weight)
       optim.zero_grad()
       loss.backward()
       optim.step()
