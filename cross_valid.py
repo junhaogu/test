@@ -61,10 +61,10 @@ def model_train(model, train_loader, test_loader, para, fold):
      loss_val_store = checkpoint['lowest_loss']
      model.load_state_dict(checkpoint['model_state_dict'])
      optim.load_state_dict(checkpoint['optimizer_state_dict'])
-     lost_list=checkpoint['lost_list']
+     loss_list=checkpoint['lost_list']
   else:
      print('first')
-     lost_list=[]
+     loss_list=[]
      print(type(lost_list), lost_list)
      epoch_con=0
      loss_val_store=2
@@ -83,7 +83,7 @@ def model_train(model, train_loader, test_loader, para, fold):
       optim.step()
 
     model.eval()
-    print(type(lost_list), lost_list)
+   
     for i ,(X,y) in enumerate(test_loader):
       X=X.to(device)
       y=y.to(device)
@@ -93,7 +93,7 @@ def model_train(model, train_loader, test_loader, para, fold):
     if loss_val_store > loss_val:
        loss_val_store=loss_val
        model_store=model
-    print(type(lost_list), lost_list)
+    
     loss_list.append([loss.item(),loss_val]) 
     torch.save({'epoch': epochs,'model_state_dict': model.state_dict(),'optimizer_state_dict': optim.state_dict(),'best_model':model_store.state_dict(),'lowest_loss': loss_val_store, 'loss_list':loss_list}, path)
     
