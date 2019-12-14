@@ -54,6 +54,7 @@ def model_train(model, train_loader, test_loader, para, fold):
   criterion=torch.nn.BCELoss()
   model_save_name='Unet_single_cell_'+str(para['unet_init_kernel'])+'features_bceloss+dice_'+str(weight)+'_fold_'+str(fold)+'.pt'
   path=para['save_path']+'/'+model_save_name
+  loss_val=0
   if para['resume']==fold:
     checkpoint=torch.load(path)
     epoch_con = checkpoint['epoch']
