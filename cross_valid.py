@@ -67,6 +67,7 @@ def model_train(model, train_loader, test_loader, para, fold):
     epoch_con=0
     loss_val_store=2
   device=para['device']
+  print(device)
   model=model.to(device)
   for epochs in range(epoch_con,para['num_epochs']):
     model.train()
@@ -84,7 +85,7 @@ def model_train(model, train_loader, test_loader, para, fold):
       X=X.to(device)
       y=y.to(device)
       prediction=model(X)
-      loss_val=(loss_val*i+torch.nn.BCELoss(prediction,y).item()+dice_loss(prediction ,y).item())/(i+1)
+      loss_val=(loss_val*i+criterion(prediction,y).item()+dice_loss(prediction ,y).item())/(i+1)
     
     if loss_val_store > loss_val:
       loss_val_store=loss_val
