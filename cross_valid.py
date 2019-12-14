@@ -8,6 +8,9 @@ Original file is located at
 """
 %load k_cross_data_split.py 
 from k_cross_data_split import k_cross_data_split
+%load model_train.py
+from model_train import model_train
+
 from torch.utils.data import DataLoader
 def cross_val(kf,sample_data,mask_data,model,para):
   for i in range(kf):
