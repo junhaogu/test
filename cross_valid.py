@@ -39,6 +39,7 @@ def cross_val(kf,sample_data,mask_data,model,para):
     train_loader=DataLoader(dataset=train_data, batch_size=para['batch_size'], shuffle=True,drop_last=True)
     test_loader=DataLoader(dataset=test_data, batch_size=para['batch_size'], shuffle=False,drop_last=True)
     print('fold:',i)
+    device=para['device']
     model1=model.to(device)
     model_train(model1,train_loader,test_loader,para,i)
   return
