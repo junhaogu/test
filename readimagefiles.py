@@ -32,7 +32,7 @@ def read_single_cell_image(image_data_path, mask_data_path):
     counter +=1 
     if counter%100==0:
       print(counter) 
-    if temp.shape[0]>=17:
+    if temp.shape[0]>17:
       sample_data=torch.cat((sample_data,temp[1:,:,:,:]),0)
       temp = torch.zeros([1,3,256,512]).type(torch.FloatTensor)
   sample_data=sample_data[1:,:,:,:]
