@@ -85,15 +85,15 @@ def model_train(model, train_loader, test_loader, para, fold):
       X=X.to(device)
       y=y.to(device)
       prediction=model(X)
-      loss_val=(loss_val*i+criterion(prediction,y).item()+dice_loss(prediction ,y).item())/(i+1)
+      loss_val=(loss_val*i+criterion(prediction,y).item()+dice_loss(prediction ,y,weight).item())/(i+1)
     
     if loss_val_store > loss_val:
-      loss_val_store=loss_val
-      model_store=model
-    loss_list.append([loss.item(),loss_val])
-    torch.save({'epoch': epochs,'model_state_dict': model.state_dict(),'optimizer_state_dict': optimizer.state_dict(),'best_model':model_store.state_dict(),'lowest_loss': loss_val_store, 'loss_list':loss_list}, path)
-  print ('Epoch [{}/{}], training error: {:.4f}, validation Loss: {:.4f}'
-                   .format(epochs+1, EPOCHS, loss, loss_val))    
+       loss_val_store=loss_val
+       model_store=model
+    loss_list.append([loss.item(),loss_val]) 
+    torch.save({'epoch': epochs,'model_state_dict': model.state_dict(),'optimizer_state_dict': optim.state_dict(),'best_model':model_store.state_dict(),'lowest_loss': loss_val_store, 'loss_list':loss_list}, path)
+    
+    print ('Epoch [{}/{}], training error: {:.4f}, validation Loss: {:.4f}'.format(epochs+1, EPOCHS, loss, loss_val))    
   return
 
 
