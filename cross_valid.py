@@ -8,7 +8,7 @@ Original file is located at
 """
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-def k_cross_data_split(sample_data, mask_data, batch_size,fold,kf):
+def k_cross_data_split(sample_data, mask, batch_size,fold,kf):
   foldsize=sample_data.shape[0]//kf
   train_image=torch.zeros([1,3,256,512]).type(torch.float)
   train_mask=torch.zeros([1,1,256,512]).type(torch.float)
