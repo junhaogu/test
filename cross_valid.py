@@ -56,16 +56,17 @@ def model_train(model, train_loader, test_loader, para, fold):
   path=para['save_path']+'/'+model_save_name
   loss_val=0
   if para['resume']==fold:
-    checkpoint=torch.load(path)
-    epoch_con = checkpoint['epoch']
-    loss_val_store = checkpoint['lowest_loss']
-    model.load_state_dict(checkpoint['model_state_dict'])
-    optim.load_state_dict(checkpoint['optimizer_state_dict'])
-    lost_list=checkpoint['lost_list']
+     checkpoint=torch.load(path)
+     epoch_con = checkpoint['epoch']
+     loss_val_store = checkpoint['lowest_loss']
+     model.load_state_dict(checkpoint['model_state_dict'])
+     optim.load_state_dict(checkpoint['optimizer_state_dict'])
+     lost_list=checkpoint['lost_list']
   else:
-    lost_list=[]
-    epoch_con=0
-    loss_val_store=2
+     print('first')
+     lost_list=[]
+     epoch_con=0
+     loss_val_store=2
   device=para['device']
   print(device)
   model=model.to(device)
