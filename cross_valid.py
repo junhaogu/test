@@ -95,7 +95,7 @@ def model_train(model, train_loader, test_loader, para, fold):
     loss_list.append([loss.item(),loss_val]) 
     torch.save({'epoch': epochs,'model_state_dict': model.state_dict(),'optimizer_state_dict': optim.state_dict(),'best_model':model_store.state_dict(),'lowest_loss': loss_val_store, 'loss_list':loss_list}, path)
     
-    print ('Epoch [{}/{}], training error: {:.4f}, validation Loss: {:.4f}'.format(epochs+1, EPOCHS, loss, loss_val))    
+    print ('Epoch [{}/{}], training error: {:.4f}, validation Loss: {:.4f}'.format(epochs+1, para['num_epochs'], loss, loss_val))    
   return
 
 
